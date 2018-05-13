@@ -1,0 +1,77 @@
+# -------------------------------
+# MapProxy example configuration.
+# -------------------------------
+#
+# This is a minimal MapProxy configuration.
+# See full_example.yaml and the documentation for more options.
+#
+
+# Starts the following services:
+# Demo:
+#     http://localhost:8080/demo
+# WMS:
+#     capabilities: http://localhost:8080/service?REQUEST=GetCapabilities
+# WMTS:
+#     capabilities: http://localhost:8080/wmts/1.0.0/WMTSCapabilities.xml
+#     first tile: http://localhost:8080/wmts/osm/webmercator/0/0/0.png
+# Tile service (compatible with OSM/etc.)
+#     first tile: http://localhost:8080/tiles/osm/webmercator/0/0/0.png
+# TMS:
+#     note: TMS is not compatible with OSM/Google Maps/etc.
+#     fist tile: http://localhost:8080/tms/1.0.0/osm/webmercator/0/0/0.png
+# KML:
+#     initial doc: http://localhost:8080/kml/osm/webmercator
+
+services:
+  demo:
+  wmts:
+  wms:
+    srs: ['EPSG:2056', 'EPSG:4326', 'EPSG:3857', 'EPSG:31467']
+    md:
+      title: MapProxy WMS Proxy
+      abstract: This is a minimal MapProxy example.
+
+layers:
+  - name: osm
+    title: Fubar OSM WMS - osm.omniscale.net
+    sources: [osm_cache]
+  - name: ortho
+    title: Orthofoto Kanton Solothurn
+    sources: [ortho_cache]
+
+caches:
+  osm_cache:
+    grids: [webmercator]
+    sources: [osm_wms]
+  ortho_cache:
+    grids: [mygrid]
+    sources: [ortho_wms]
+
+
+sources:
+  osm_wms:
+    type: wms
+    req:
+      # use of this source is only permitted for testing
+      url: http://osm.omniscale.net/proxy/service?
+      layers: osm
+  ortho_wms:
+    type: wms
+    supported_srs: ['EPSG:2056']
+    req:
+      # use of this source is only permitted for testing
+      url: http://geoweb.so.ch/wms/sogis_orthofoto.wms?
+      layers: Ortho_SO
+
+grids:
+    webmercator:
+      base: GLOBAL_WEBMERCATOR
+    mygrid: 
+      srs: EPSG:2056
+      res: [4000,3750,3500,3250,3000,2750,2500,2250,2000,1750,1500,1250,1000,750,650,500,250,100,50,20,10,5,2.5,2,1.5,1,0.5,0.25,0.1] 
+      bbox: [2560000,1210000,2675000,1280000] 
+      bbox_srs: EPSG:2056 
+      origin: nw 
+      stretch_factor: 1.0 
+
+globals:
